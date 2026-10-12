@@ -1,0 +1,635 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#020504">
+<title>BLACK VENOM | Cyber System</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --green: #00ff88;
+  --dark: #020504;
+  --red: #ff244c;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--dark);
+  color: #e9fff3;
+  font-family: Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: .24;
+  pointer-events: none;
+}
+
+.glow {
+  position: fixed;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: #00ff8812;
+  filter: blur(75px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow.one {
+  top: 10%;
+  left: -100px;
+}
+
+.glow.two {
+  bottom: 5%;
+  right: -100px;
+}
+
+header {
+  position: relative;
+  z-index: 1;
+  padding: 24px 15px;
+  text-align: center;
+  border-bottom: 1px solid #00ff8828;
+  background: #020504e8;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: 5px;
+  color: var(--green);
+  text-shadow: 0 0 20px #00ff8866;
+}
+
+.subtitle {
+  margin-top: 8px;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #7c998a;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: min(92%, 650px);
+  margin: 28px auto;
+}
+
+.warning {
+  border: 1px solid #ff244c55;
+  color: #ff718a;
+  background: #ff244c0a;
+  padding: 12px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 1px;
+  line-height: 1.8;
+  margin-bottom: 24px;
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  50% {
+    border-color: #ff244c15;
+  }
+}
+
+.title {
+  text-align: center;
+  font-size: clamp(25px, 6vw, 39px);
+  font-weight: 900;
+  line-height: 1.4;
+}
+
+.title span {
+  color: var(--green);
+  text-shadow: 0 0 20px #00ff8844;
+}
+
+.description {
+  text-align: center;
+  color: #80988b;
+  font-size: 13px;
+  line-height: 1.9;
+  margin: 12px 0 26px;
+}
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid #00ff8825;
+  background: #06100b;
+  padding: 15px;
+  font-size: 11px;
+  margin-bottom: 15px;
+}
+
+.dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--green);
+  border-radius: 50%;
+  margin-right: 5px;
+  box-shadow: 0 0 10px var(--green);
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .3;
+  }
+}
+
+.devices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+  margin-bottom: 22px;
+}
+
+.device {
+  padding: 22px 12px;
+  background: linear-gradient(145deg, #0b1710, #030605);
+  border: 1px solid #00ff8833;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: .25s;
+}
+
+.device:hover,
+.device.selected {
+  border-color: var(--green);
+  box-shadow: 0 0 22px #00ff881a;
+  transform: translateY(-3px);
+}
+
+.device-icon {
+  font-size: 39px;
+  margin-bottom: 12px;
+}
+
+.device h3 {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.device p {
+  font-size: 10px;
+  color: #779082;
+}
+
+.tag {
+  display: inline-block;
+  color: var(--green);
+  border: 1px solid #00ff8840;
+  padding: 5px 8px;
+  margin-top: 13px;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.panel {
+  border: 1px solid #00ff8833;
+  background: #040a07ed;
+  padding: 17px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.panel-title {
+  color: var(--green);
+  font-size: 11px;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.log {
+  height: 125px;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  color: #69bb8b;
+  font-family: monospace;
+  font-size: 11px;
+  line-height: 2;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+  color: #8ca395;
+  margin: 16px 0 10px;
+}
+
+.progress {
+  height: 5px;
+  background: #17241b;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.bar {
+  height: 100%;
+  width: 0%;
+  background: var(--green);
+  box-shadow: 0 0 15px var(--green);
+  transition: width .3s;
+}
+
+#start {
+  position: relative;
+  width: 100%;
+  border: 1px solid var(--green);
+  padding: 18px 12px;
+  background: var(--green);
+  color: #00180b;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background .2s, color .2s, box-shadow .2s;
+  transform-style: preserve-3d;
+}
+
+#start:hover {
+  background: transparent;
+  color: var(--green);
+  box-shadow: 0 0 25px #00ff8825;
+}
+
+/* Effetto rotazione di due secondi */
+
+#start.loading {
+  background: #020504;
+  color: var(--green);
+  pointer-events: none;
+  animation: cyberSpin .65s linear infinite;
+  box-shadow:
+    0 0 15px #00ff8870,
+    inset 0 0 15px #00ff8820;
+}
+
+@keyframes cyberSpin {
+  0% {
+    transform: perspective(500px) rotateY(0deg);
+    box-shadow: 0 0 10px #00ff88;
+  }
+
+  50% {
+    transform: perspective(500px) rotateY(180deg);
+    box-shadow: 0 0 30px #00ff88;
+  }
+
+  100% {
+    transform: perspective(500px) rotateY(360deg);
+    box-shadow: 0 0 10px #00ff88;
+  }
+}
+
+.result {
+  display: none;
+  text-align: center;
+  padding: 22px 12px;
+  border: 1px solid #00ff8850;
+  margin-top: 17px;
+  background: #00ff8808;
+  line-height: 2;
+}
+
+.result h3 {
+  color: var(--green);
+  font-size: 15px;
+}
+
+.result p {
+  color: #9ab4a4;
+  font-size: 12px;
+}
+
+footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 25px 10px;
+  border-top: 1px solid #00ff881a;
+  color: #52695b;
+  font-size: 10px;
+  letter-spacing: 1px;
+  line-height: 2;
+}
+
+@media (max-width: 360px) {
+  .logo {
+    font-size: 21px;
+    letter-spacing: 3px;
+  }
+
+  .status {
+    font-size: 9px;
+  }
+
+  .tag {
+    font-size: 8px;
+    letter-spacing: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .warning,
+  .dot {
+    animation: none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix" aria-hidden="true"></canvas>
+<div class="glow one"></div>
+<div class="glow two"></div>
+
+<header>
+  <div class="logo">BLACK VENOM</div>
+  <div class="subtitle">CENTRO DI SIMULAZIONE CYBER</div>
+</header>
+
+<main class="container">
+
+  <div class="warning">
+    ⚠ SIMULAZIONE VISIVA · NESSUN DISPOSITIVO VIENE HACKERATO
+  </div>
+
+  <h1 class="title">
+    ACCESSO AL <span>SISTEMA</span><br>
+    CYBER SHADOW
+  </h1>
+
+  <p class="description">
+    Interfaccia futuristica di simulazione informatica.<br>
+    Seleziona un dispositivo e avvia la simulazione.
+  </p>
+
+  <div class="status">
+    <span><i class="dot"></i>SISTEMA ATTIVO</span>
+    <span id="clock">00:00:00</span>
+  </div>
+
+  <div class="devices">
+
+    <div class="device selected"
+         data-device="iPhone"
+         role="button"
+         tabindex="0"
+         aria-pressed="true">
+
+      <div class="device-icon">📱</div>
+      <h3>Apple iPhone</h3>
+      <p>Simulazione iOS</p>
+      <span class="tag">MODALITÀ IOS</span>
+    </div>
+
+    <div class="device"
+         data-device="Android"
+         role="button"
+         tabindex="0"
+         aria-pressed="false">
+
+      <div class="device-icon">🤖</div>
+      <h3>Android</h3>
+      <p>Simulazione Android</p>
+      <span class="tag">MODALITÀ ANDROID</span>
+    </div>
+
+  </div>
+
+  <section class="panel">
+
+    <div class="panel-title">
+      [ CONSOLE DI SISTEMA ]
+    </div>
+
+    <div class="log" id="log" aria-live="polite">
+      &gt; Inizializzazione interfaccia...<br>
+      &gt; Modulo grafico caricato.<br>
+      &gt; In attesa di comando...
+    </div>
+
+    <div class="progress-info">
+      <span>AVANZAMENTO SIMULAZIONE</span>
+      <span id="percent">0%</span>
+    </div>
+
+    <div class="progress"
+         role="progressbar"
+         aria-label="Avanzamento"
+         aria-valuemin="0"
+         aria-valuemax="100"
+         aria-valuenow="0"
+         id="progressTrack">
+
+      <div class="bar" id="bar"></div>
+    </div>
+
+  </section>
+
+  <button id="start" type="button">
+    ▶ AVVIA SIMULAZIONE
+  </button>
+
+  <div class="result" id="result">
+    <h3>✓ SIMULAZIONE COMPLETATA</h3>
+    <p id="resultText">
+      La dimostrazione grafica è terminata.
+    </p>
+    <p>Nessun dato è stato raccolto o modificato.</p>
+  </div>
+
+</main>
+
+<footer>
+  BLACK VENOM © 2026<br>
+  PROGETTO DIMOSTRATIVO · CYBERSECURITY VISUAL
+</footer>
+
+<script>
+/* =====================================
+   SFONDO MATRIX
+===================================== */
+
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+
+let width = 0;
+let height = 0;
+let drops = [];
+
+const fontSize = 14;
+const chars = "0123456789ABCDEFアイウエオ";
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  width = window.innerWidth;
+  height = window.innerHeight;
+
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+
+  canvas.style.width = width + "px";
+  canvas.style.height = height + "px";
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  drops = Array(Math.ceil(width / fontSize)).fill(1);
+}
+
+window.addEventListener("resize", resize);
+resize();
+
+function drawMatrix() {
+  ctx.fillStyle = "rgba(2, 5, 4, 0.09)";
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.fillStyle = "#00ff88";
+  ctx.font = fontSize + "px monospace";
+
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[
+      Math.floor(Math.random() * chars.length)
+    ];
+
+    ctx.fillText(
+      char,
+      i * fontSize,
+      drops[i] * fontSize
+    );
+
+    if (
+      drops[i] * fontSize > height &&
+      Math.random() > 0.975
+    ) {
+      drops[i] = 0;
+    }
+
+    drops[i]++;
+  }
+}
+
+setInterval(drawMatrix, 55);
+
+/* =====================================
+   OROLOGIO
+===================================== */
+
+const clock = document.getElementById("clock");
+
+function updateClock() {
+  clock.textContent =
+    new Date().toLocaleTimeString("it-IT");
+}
+
+updateClock();
+setInterval(updateClock, 1000);
+
+/* =====================================
+   SELEZIONE DISPOSITIVO
+===================================== */
+
+let selectedDevice = "iPhone";
+
+const devices = document.querySelectorAll(".device");
+const log = document.getElementById("log");
+
+function selectDevice(device) {
+  if (startButton.classList.contains("loading")) {
+    return;
+  }
+
+  devices.forEach(item => {
+    const selected = item === device;
+
+    item.classList.toggle("selected", selected);
+    item.setAttribute("aria-pressed", String(selected));
+  });
+
+  selectedDevice = device.dataset.device;
+
+  log.innerHTML =
+    "&gt; Dispositivo selezionato: " + selectedDevice +
+    "<br>&gt; Modalità dimostrativa pronta." +
+    "<br>&gt; In attesa di comando...";
+}
+
+devices.forEach(device => {
+  device.addEventListener("click", () => {
+    selectDevice(device);
+  });
+
+  device.addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      selectDevice(device);
+    }
+  });
+});
+
+/* =====================================
+   BOTTONE E APERTURA VIDEO
+===================================== */
+
+const videoURL =
+  "https://videotourl.com/videos/1791844806627-000a5544-3d2c-474e-808f-6562f576b5ef.mov";
+
+const startButton = document.getElementById("start");
+
+let redirectTimer = null;
+
+startButton.addEventListener("click", function() {
+
+  // Evita click ripetuti durante l'animazione.
+  if (startButton.classList.contains("loading")) {
+    return;
+  }
+
+  // Avvia l'effetto grafico.
+  startButton.classList.add("loading");
+  startButton.setAttribute("aria-busy", "true");
+  startButton.textContent = "⏳ ACCESSO IN CORSO...";
+
+  log.innerHTML =
+    "&gt; Inizializzazione sequenza..." +
+    "<br>&gt; Dispositivo: " + selectedDevice +
+    "<br>&gt; Preparazione apertura video...";
+
+  // Attende esattamente 2 secondi, poi apre il video.
+  redirectTimer = setTimeout(function() {
+    window.location.href = videoURL;
+  }, 2000);
+
+});
+
+</script>
+
+</body>
+</html>
